@@ -27,7 +27,20 @@ for node in $WINDOWS_NODES; do
 done
 
 # Download and set the list of test image repositories to use.
-curl https://raw.githubusercontent.com/kubernetes-sigs/windows-testing/master/images/image-repo-list-ws1803 -o ${WORKSPACE}/repo-list.yaml
+
+# curl https://raw.githubusercontent.com/kubernetes-sigs/windows-testing/master/images/image-repo-list-ws1803 -o ${WORKSPACE}/repo-list.yaml
+# Temporarily switching to use the claudiubelu repos to test the new images.
+cat >> ${WORKSPACE}/repo-list.yaml <<EOF
+dockerLibraryRegistry: claudiubelu
+e2eRegistry: claudiubelu
+gcRegistry: claudiubelu
+hazelcastRegistry: claudiubelu
+PrivateRegistry: claudiubelu
+sampleRegistry: claudiubelu
+stormRegistry: claudiubelu
+zookeeperRegistry: claudiubelu
+EOF
+
 export KUBE_TEST_REPO_LIST=${WORKSPACE}/repo-list.yaml
 
 # Download the list of tests to exclude.
