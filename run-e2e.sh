@@ -32,18 +32,6 @@ curl \
   -o ${WORKSPACE}/repo-list.yaml
 export KUBE_TEST_REPO_LIST=${WORKSPACE}/repo-list.yaml
 
-# Download the list of tests to exclude.
-curl https://raw.githubusercontent.com/e2e-win/e2e-win-prow-deployment/master/exclude_conformance_test.txt -o ${WORKSPACE}/exclude_conformance_test.txt
-# Ignore lines starting with "#"
-EXCLUDED_TESTS=$(cat ${WORKSPACE}/exclude_conformance_test.txt |
-  tr -d '\r' |                # remove Windows carriage returns
-  grep -v '^#' |              # ignore comment lines
-  grep -v '^$' |              # ignore blank lines
-  tr -s '\n' '|' |            # coalesce newlines into |
-  tr -s ' ' '.' |             # coalesce spaces into .
-  sed -e 's/[]\[()]/\\&/g' |  # escape brackets and parentheses
-  sed -e 's/.$//g')           # remove final | added by tr
-
 # When using customized test command (which we are now), report-dir is not set
 # by default, so set it here.
 # The test framework will not proceed to run tests unless all nodes are ready
@@ -51,4 +39,4 @@ EXCLUDED_TESTS=$(cat ${WORKSPACE}/exclude_conformance_test.txt |
 # unschedulable.
 # Do not set --disable-log-dump because upstream cannot handle dumping logs
 # from windows nodes yet.
-./hack/ginkgo-e2e.sh $@ --report-dir=${ARTIFACTS} --allowed-not-ready-nodes=${LINUX_NODE_COUNT} --ginkgo.skip=${EXCLUDED_TESTS}
+./hack/ginkgo-e2e.sh $@ --report-dir=${ARTIFACTS} --allowed-not-ready-nodes=${LINUX_NODE_COUNT}
