@@ -29,7 +29,7 @@ done
 SCRIPT_ROOT=$(cd `dirname $0` && pwd)
 kubectl create -f ${SCRIPT_ROOT}/prepull.yaml
 # Wait 10 minutes for the test images to be pulled onto the nodes.
-sleep 10m
+sleep 15m
 # Check the status of the pods.
 kubectl get pods -o wide
 # Delete the pods anyway since pre-pulling is best-effort
