@@ -7,9 +7,6 @@ set -o xtrace
 # When running in prow, the working directory is the root of the test-infra
 # repository.
 
-# Wait 5 minutes for the test images to be pulled onto the nodes
-sleep 5m
-
 # Taint the Linux nodes to prevent the test workloads from landing on them.
 # TODO: remove this once the issue is resolved:
 # https://github.com/kubernetes/kubernetes/issues/69892
@@ -25,6 +22,20 @@ WINDOWS_NODES=$(kubectl get nodes -l beta.kubernetes.io/os=windows -o name)
 for node in $WINDOWS_NODES; do
   kubectl taint node $node node.kubernetes.io/os:NoSchedule-
 done
+
+# Pre-pull all the test images. The images are currently hard-coded.
+# Eventually, we should get the list directly from
+# https://github.com/kubernetes-sigs/windows-testing/blob/master/images/PullImages.ps1
+SCRIPT_ROOT=$(cd `dirname $0` && pwd)
+kubectl create -f ${SCRIPT_ROOT}/prepull.yaml
+# Wait 10 minutes for the test images to be pulled onto the nodes.
+sleep 10m
+# Check the status of the pods.
+kubectl get pods -o wide
+# Delete the pods anyway since pre-pulling is best-effort
+kubectl delete -f ${SCRIPT_ROOT}/prepull.yaml
+# Wait a few more minutes for the pod to be cleaned up.
+sleep 3m
 
 # Download and set the list of test image repositories to use.
 curl \
