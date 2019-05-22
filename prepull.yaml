@@ -1,11 +1,8 @@
 apiVersion: apps/v1
-kind: ReplicaSet
+kind: DaemonSet
 metadata:
   name: prepull
-  labels:
-    prepull-test-images: e2e
 spec:
-  replicas: 3
   selector:
     matchLabels:
       prepull-test-images: e2e
@@ -14,14 +11,6 @@ spec:
       labels:
         prepull-test-images: e2e
     spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: prepull-test-images
-                operator: Exists
-            topologyKey: "kubernetes.io/hostname"
       nodeSelector:
         kubernetes.io/os: windows
       initContainers:
@@ -142,4 +131,3 @@ spec:
       containers:
       - image: mcr.microsoft.com/k8s/core/pause:1.0.0
         name: pause
-
