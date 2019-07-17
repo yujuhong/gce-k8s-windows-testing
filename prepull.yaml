@@ -111,7 +111,10 @@ spec:
         name: redis32
         command: ["cmd", "exit"]
       - image: e2eteam/resource-consumer:1.4
-        name: resource-consumer33
+        name: resource-consumer33-1
+        command: ["cmd", "exit"]
+      - image: e2eteam/resource-consumer:1.5
+        name: resource-consumer33-2
         command: ["cmd", "exit"]
       - image: e2eteam/resource-consumer-controller:1.0
         name: resource-consumer-controller34
